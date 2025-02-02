@@ -1,6 +1,6 @@
 package co.spring_webflux.entity;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -23,7 +23,7 @@ public class ProductEntity {
 
     private Double price;
 
-    private Date createAt;
+    private LocalDate createAt;
 
     public ProductEntity(String name, Double price) {
         this.name = name;

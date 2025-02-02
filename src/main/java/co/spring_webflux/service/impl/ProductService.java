@@ -14,29 +14,25 @@ import reactor.core.publisher.Mono;
 public class ProductService implements IProductService {
 
     private final ProductRepository productRepository;
-    
+
     @Override
     public Flux<ProductEntity> findAll() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findAll'");
+        return productRepository.findAll();
     }
 
     @Override
     public Mono<ProductEntity> findById(String id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findById'");
+        return productRepository.findById(id);
     }
 
     @Override
     public Mono<ProductEntity> save(ProductEntity productEntity) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'save'");
+        return productRepository.save(productEntity);
     }
 
     @Override
     public Mono<Void> delete(ProductEntity productEntity) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'delete'");
+        return productRepository.delete(productEntity);
     }
     
 }
