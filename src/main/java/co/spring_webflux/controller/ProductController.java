@@ -2,14 +2,19 @@ package co.spring_webflux.controller;
 
 import java.time.Duration;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.thymeleaf.spring6.context.webflux.ReactiveDataDriverContextVariable;
 
 import co.spring_webflux.entity.ProductEntity;
 import co.spring_webflux.service.IProductService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -19,16 +24,30 @@ import reactor.core.publisher.Mono;
 public class ProductController {
 
     private final IProductService productService;
+    private static final Logger log = LoggerFactory.getLogger(ProductController.class);
 
     @GetMapping("/form")
-    public Mono<String> showForm(Model model) {
+    public Mono<String> showFormCreate(Model model) {
         model.addAttribute("product", new ProductEntity());
         model.addAttribute("title", "Registrar producto");
         return Mono.just("form");
     }
 
+    @GetMapping("/form/{id}")
+    public Mono<String> showFormUpdate(@PathVariable String id, Model model) {
+        return productService.findById(id).doOnNext(p -> {
+            log.info(p.getId());
+            model.addAttribute("product", p);
+            model.addAttribute("title", "Actualizar producto");
+        }).defaultIfEmpty(new ProductEntity()).then(Mono.just("form"));
+
+    }
+
     @PostMapping("/form")
-    public Mono<String> save(ProductEntity productEntity) {
+    public Mono<String> save(@Valid ProductEntity productEntity, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return Mono.just("form");
+        }
         return productService.save(productEntity).thenReturn("redirect:/findAll");
     }
 
@@ -54,6 +73,13 @@ public class ProductController {
         model.addAttribute("title", "Listado de productos");
         model.addAttribute("products", products);
         return Mono.just("products");
+    }
+
+    @GetMapping("/eliminar/{id}")
+    public Mono<String> deleteProduct(@PathVariable String id) {
+        return productService.findById(id).flatMap(p -> {
+            return productService.delete(p);
+        }).then(Mono.just("redirect:/findAll"));
     }
 
 }

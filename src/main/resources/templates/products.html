@@ -20,6 +20,7 @@
                     <th>Nombre</th>
                     <th>Pecio</th>
                     <th>Fecha</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -28,6 +29,11 @@
                     <td th:text="${product.name}"></td>
                     <td th:text="${product.price}"></td>
                     <td th:text="${product.createAt}"></td>
+                    <td>
+						<a class="mx-2" th:href="@{/form/} + ${product.id}" >Editar</a>
+						<a class="mx-2" th:href="@{/eliminar/} + ${product.id}">Eliminar</a>
+
+					</td>
                 </tr>
             </tbody>
         </table>
