@@ -3,6 +3,7 @@ package co.spring_webflux.entity;
 import java.time.LocalDate;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import jakarta.validation.constraints.NotEmpty;
@@ -28,10 +29,20 @@ public class ProductEntity {
 
     private LocalDate createAt;
 
+    private String categoryId;
+
+    @Transient
+    private CategoryEntity category;
+
     public ProductEntity(String name, Double price) {
         this.name = name;
         this.price = price;
     }
 
-    
+    public ProductEntity(String name, Double price, CategoryEntity category) {
+        this.name = name;
+        this.price = price;
+        this.category = category;
+    }
+
 }

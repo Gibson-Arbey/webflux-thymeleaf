@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.thymeleaf.spring6.context.webflux.ReactiveDataDriverContextVariable;
 
+import co.spring_webflux.entity.CategoryEntity;
 import co.spring_webflux.entity.ProductEntity;
+import co.spring_webflux.service.ICategoryService;
 import co.spring_webflux.service.IProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,12 +26,14 @@ import reactor.core.publisher.Mono;
 public class ProductController {
 
     private final IProductService productService;
+    private final ICategoryService categoryService;
     private static final Logger log = LoggerFactory.getLogger(ProductController.class);
 
     @GetMapping("/form")
     public Mono<String> showFormCreate(Model model) {
         model.addAttribute("product", new ProductEntity());
         model.addAttribute("title", "Registrar producto");
+        model.addAttribute("categories", categoryService.findAll().collectList());
         return Mono.just("form");
     }
 
@@ -39,6 +43,7 @@ public class ProductController {
             log.info(p.getId());
             model.addAttribute("product", p);
             model.addAttribute("title", "Actualizar producto");
+            model.addAttribute("categories", categoryService.findAll().collectList());
         }).defaultIfEmpty(new ProductEntity()).then(Mono.just("form"));
 
     }
@@ -53,7 +58,14 @@ public class ProductController {
 
     @GetMapping({ "/findAll", "/" })
     public Mono<String> findAll(Model model) {
-        Flux<ProductEntity> products = productService.findAll();
+        Flux<ProductEntity> products = productService.findAll()
+        .flatMap(product -> categoryService.findById(product.getCategoryId())
+            .defaultIfEmpty(new CategoryEntity("Sin categoría"))
+            .map(category -> {
+                product.setCategory(category); // Asignamos la categoría
+                return product;
+            })
+        );
         model.addAttribute("title", "Listado de productos");
         model.addAttribute("products", products);
         return Mono.just("products");

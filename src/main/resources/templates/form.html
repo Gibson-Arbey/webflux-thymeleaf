@@ -33,6 +33,15 @@
                 <div class="col-sm-10">
                     <input class="form-control" type="date" name="createAt" th:field="*{createAt}" th:value="${productExistente != null ? productExistente.createAt : ''}" required />
                 </div>
+                <br><br>
+                <label for="category.id" class="col-sm-2 col-form-label" >Categoria:</label>
+                <div class="col-sm-10">
+                    <select class="form-select" th:field="*{category.id}" required >
+                        <option value="">Seleccione una categoría</option>
+                        <option th:each="category : ${categories}"
+                            th:value="${category.id}" th:text="${category.name}"></option>
+                    </select>
+                </div>
             </div>
             <br>
             <div class="form-group row">
