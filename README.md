@@ -12,7 +12,7 @@ src\main\resources\webflux.categories.json
 src\main\resources\webflux.products.json
 ```
 
-## 4. Ejecutar el proeyecto
+## 4. Ejecutar el proyecto
 ```mvn spring-boot:run```
 
 ## 5. Acceder en el navegador a la ruta localhost:8080
